@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 750px; margin: 40px auto; padding: 0 20px; background: #f8fafc; color: #1e293b; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        h2 { margin-top: 0; color: #0f172a; font-size: 1.2rem; }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+        input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; width: 140px; }
+        button { padding: 8px 14px; border: none; border-radius: 6px; background: #2563eb; color: white; cursor: pointer; font-weight: 500; }
+        button:hover { background: #1d4ed8; }
+        button.sec { background: #475569; }
+        button.danger { background: #dc2626; }
+        .output { background: #f1f5f9; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 1rem; min-height: 24px; }
+    </style>
+</head>
+<body>
+    <h1>Calculator</h1>
+
+    <!-- MODULE BST -->
+    <div class="card">
+        <h2>1. Cây Nhị Phân Tìm Kiếm (BST)</h2>
+        <div class="row">
+            <input type="number" id="bstInput" placeholder="Nhập số nguyên...">
+            <button onclick="bstInsert()">Thêm Nút</button>
+            <button class="sec" onclick="bstAction(1)">Duyệt PreOrder</button>
+            <button class="sec" onclick="bstAction(2)">Duyệt InOrder</button>
+            <button class="sec" onclick="bstAction(3)">Tìm Min / Max</button>
+            <button class="danger" onclick="bstReset()">Xóa Cây</button>
+        </div>
+        <div class="output" id="bstOut">Chưa có dữ liệu...</div>
+    </div>
+
+    <!-- MODULE LINKED LIST -->
+    <div class="card">
+        <h2>2. Danh Sách Liên Kết (Linked List)</h2>
+        <div class="row">
+            <input type="number" id="listInput" placeholder="Nhập số nguyên...">
+            <button onclick="listAppend()">Thêm Cuối</button>
+            <button class="sec" onclick="listSort()">Sắp Xếp Tăng</button>
+            <button class="sec" onclick="listAvg()">Tính Trung Bình</button>
+        </div>
+        <div class="output" id="listOut">Chưa có dữ liệu...</div>
+    </div>
+
+    <!-- MODULE STACK -->
+    <div class="card">
+        <h2>3. Ngăn Xếp & Đổi Cơ Số (Stack)</h2>
+        <div class="row">
+            <input type="number" id="stackInput" placeholder="Nhập số...">
+            <button onclick="stackPush()">Push vào Stack</button>
+            <button class="sec" onclick="stackDecToBin()">Đổi sang Nhị Phân</button>
+        </div>
+        <div class="output" id="stackOut">Chưa có dữ liệu...</div>
+    </div>
+
+    <script src="dsa_wasm.js"></script>
+    <script>
+        // Đợi WebAssembly tải xong mới kích hoạt các nút bấm
+        Module.onRuntimeInitialized = () => {
+            Module._wasm_init();
+        };
+
+        // Hàm hỗ trợ đọc chuỗi C trả về
+        const getStr = (ptr) => Module.UTF8ToString(ptr);
+
+        // Xử lý BST
+        function bstInsert() {
+            const val = parseInt(document.getElementById('bstInput').value);
+            if (isNaN(val)) return;
+            const res = getStr(Module._wasm_bst_insert(val));
+            document.getElementById('bstOut').innerText = "InOrder hiện tại: " + res;
+            document.getElementById('bstInput').value = '';
+        }
+        function bstAction(type) {
+            const res = getStr(Module._wasm_bst_traversal(type));
+            document.getElementById('bstOut').innerText = res;
+        }
+        function bstReset() {
+            Module._wasm_bst_reset();
+            document.getElementById('bstOut').innerText = "Đã xóa rỗng cây.";
+        }
+
+        // Xử lý Linked List
+        function listAppend() {
+            const val = parseInt(document.getElementById('listInput').value);
+            if (isNaN(val)) return;
+            const res = getStr(Module._wasm_list_append(val));
+            document.getElementById('listOut').innerText = res;
+            document.getElementById('listInput').value = '';
+        }
+        function listSort() {
+            const res = getStr(Module._wasm_list_sort());
+            document.getElementById('listOut').innerText = "Sau sắp xếp: " + res;
+        }
+        function listAvg() {
+            const avg = Module._wasm_list_avg();
+            document.getElementById('listOut').innerText = "Giá trị trung bình: " + avg.toFixed(2);
+        }
+
+        // Xử lý Stack
+        function stackPush() {
+            const val = parseInt(document.getElementById('stackInput').value);
+            if (isNaN(val)) return;
+            const res = getStr(Module._wasm_stack_push(val));
+            document.getElementById('stackOut').innerText = "Đỉnh Stack -> " + res;
+            document.getElementById('stackInput').value = '';
+        }
+        function stackDecToBin() {
+            const val = parseInt(document.getElementById('stackInput').value);
+            if (isNaN(val) || val < 0) return;
+            const res = getStr(Module._wasm_stack_decToBin(val));
+            document.getElementById('stackOut').innerText = `Số ${val} sang nhị phân: ${res}`;
+        }
+    </script>
+</body>
+</html>
