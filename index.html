@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSA Calculator (C + WebAssembly)</title>
+    <title>DSA Calculator</title>
     <style>
         :root { --primary: #2563eb; --primary-dark: #1d4ed8; --sec: #475569; --danger: #dc2626; --success: #16a34a; --bg: #f1f5f9; }
         body { font-family: system-ui, -apple-system, sans-serif; max-width: 860px; margin: 30px auto; padding: 0 16px; background: var(--bg); color: #1e293b; }
@@ -35,7 +35,7 @@
     </style>
 </head>
 <body>
-    <h1>DSA WebAssembly Calculator</h1>
+    <h1>DSA Calculator</h1>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('bst', this)">1. Cây BST</button>
@@ -109,8 +109,8 @@
         <h3>Ứng dụng chuyển đổi cơ số</h3>
         <div class="row">
             <input type="number" id="convVal" placeholder="Nhập số cần đổi...">
-            <button class="success" onclick="stackDecToBin()">Thập phân → Nhị phân (decToBin)</button>
-            <button class="success" onclick="stackBinToDec()">Nhị phân → Thập phân (binToDec)</button>
+            <button class="success" onclick="stackDecToBin()">Thập phân → Nhị phân</button>
+            <button class="success" onclick="stackBinToDec()">Nhị phân → Thập phân</button>
         </div>
         <div class="output" id="stackOut">Sẵn sàng thao tác trên Stack...</div>
     </div>
@@ -127,7 +127,7 @@
                     <input type="number" id="pExp" placeholder="Bậc...">
                 </div>
                 <div class="row">
-                    <button onclick="polyInsert(1)">Thêm đơn thức (chenDonThuc)</button>
+                    <button onclick="polyInsert(1)">Thêm đơn thức</button>
                     <button class="danger" onclick="polyReset(1)">Xóa P(x)</button>
                 </div>
             </div>
@@ -140,17 +140,17 @@
                     <input type="number" id="qExp" placeholder="Bậc...">
                 </div>
                 <div class="row">
-                    <button onclick="polyInsert(2)">Thêm đơn thức (chenDonThuc)</button>
+                    <button onclick="polyInsert(2)">Thêm đơn thức</button>
                     <button class="danger" onclick="polyReset(2)">Xóa Q(x)</button>
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <button class="success" onclick="polyAdd()">Cộng P(x) + Q(x) (congDaThuc)</button>
-            <button class="success" onclick="polyMul()">Nhân P(x) × Q(x) (nhanDaThuc)</button>
-            <button class="sec" onclick="polyDeriv(1)">Đạo hàm P'(x) (tinhDaoHam)</button>
-            <button class="sec" onclick="polyDeriv(2)">Đạo hàm Q'(x) (tinhDaoHam)</button>
+            <button class="success" onclick="polyAdd()">Cộng P(x) + Q(x)</button>
+            <button class="success" onclick="polyMul()">Nhân P(x) × Q(x)</button>
+            <button class="sec" onclick="polyDeriv(1)">Đạo hàm P'(x)</button>
+            <button class="sec" onclick="polyDeriv(2)">Đạo hàm Q'(x)</button>
         </div>
         <div class="output" id="polyOut">Nhập các đơn thức cho P(x) và Q(x) để tính toán...</div>
     </div>
