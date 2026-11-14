@@ -58,10 +58,10 @@
             <button class="sec" onclick="bstTraverse(1)">Duyệt PreOrder</button>
             <button class="sec" onclick="bstTraverse(2)">Duyệt InOrder</button>
             <button class="sec" onclick="bstTraverse(3)">Duyệt PostOrder</button>
-            <button class="success" onclick="bstMinMax(1)">Tìm Min (getMin)</button>
-            <button class="success" onclick="bstMinMax(2)">Tìm Max (getMax)</button>
-            <button class="sec" onclick="bstCheckEmpty()">Kiểm tra rỗng (empty)</button>
-            <button class="danger" onclick="bstReset()">Xóa cây (freeTree)</button>
+            <button class="success" onclick="bstMinMax(1)">Tìm Min</button>
+            <button class="success" onclick="bstMinMax(2)">Tìm Max</button>
+            <button class="sec" onclick="bstCheckEmpty()">Kiểm tra rỗng</button>
+            <button class="danger" onclick="bstReset()">Xóa cây</button>
         </div>
         <div class="output" id="bstOut">Sẵn sàng thao tác trên BST...</div>
     </div>
@@ -73,22 +73,22 @@
         <div class="row">
             <input type="number" id="listVal" placeholder="Nhập số nguyên x...">
             <button onclick="listAppend()">Thêm cuối (append)</button>
-            <button class="danger" onclick="listDeleteVal()">Xóa phần tử x (deleteList)</button>
-            <button class="sec" onclick="listMember()">Kiểm tra tồn tại (member)</button>
+            <button class="danger" onclick="listDeleteVal()">Xóa phần tử x</button>
+            <button class="sec" onclick="listMember()">Kiểm tra tồn tại</button>
         </div>
         <div class="row">
-            <button class="sec" onclick="listPrint()">In danh sách (printList)</button>
-            <button class="success" onclick="listSort(1)">Sắp xếp tăng (sort)</button>
-            <button class="success" onclick="listSort(2)">Sắp xếp giảm (sort1)</button>
-            <button class="sec" onclick="listAvg()">Trung bình (average)</button>
-            <button class="sec" onclick="listEvenOdd(1)">Số chẵn (printEven)</button>
-            <button class="sec" onclick="listEvenOdd(2)">Số lẻ (printOod)</button>
-            <button class="sec" onclick="listCheckEmpty()">Kiểm tra rỗng (emptyList)</button>
-            <button class="danger" onclick="listReset()">Xóa DS (freeList)</button>
+            <button class="sec" onclick="listPrint()">In danh sách</button>
+            <button class="success" onclick="listSort(1)">Sắp xếp tăng</button>
+            <button class="success" onclick="listSort(2)">Sắp xếp giảm</button>
+            <button class="sec" onclick="listAvg()">Trung bình</button>
+            <button class="sec" onclick="listEvenOdd(1)">Số chẵn</button>
+            <button class="sec" onclick="listEvenOdd(2)">Số lẻ</button>
+            <button class="sec" onclick="listCheckEmpty()">Kiểm tra rỗng</button>
+            <button class="danger" onclick="listReset()">Xóa DS</button>
         </div>
         <div class="row">
             <input type="text" id="list2Input" placeholder="Nhập dãy số DS L2 (VD: 2 4 6 8) để tìm giao...">
-            <button class="success" onclick="listIntersect()">Giao L1 ∩ L2 (intersection)</button>
+            <button class="success" onclick="listIntersect()">Giao L1 ∩ L2</button>
         </div>
         <div class="output" id="listOut">Sẵn sàng thao tác trên Linked List...</div>
     </div>
@@ -99,18 +99,18 @@
         <div class="status-box" id="stackState">Ngăn xếp (Đỉnh -> Đáy): (Rỗng)</div>
         <div class="row">
             <input type="number" id="stackVal" placeholder="Nhập số nguyên x...">
-            <button onclick="stackPush()">Push (push)</button>
-            <button class="danger" onclick="stackPop()">Pop (pop)</button>
-            <button class="sec" onclick="stackTop()">Xem đỉnh (top)</button>
-            <button class="sec" onclick="stackPrint()">In Stack (printStack)</button>
-            <button class="sec" onclick="stackCheckEmpty()">Kiểm tra rỗng (emptyStack)</button>
-            <button class="danger" onclick="stackReset()">Làm rỗng (makenullStack)</button>
+            <button onclick="stackPush()">thêm</button>
+            <button class="danger" onclick="stackPop()">xóa</button>
+            <button class="sec" onclick="stackTop()">Xem đỉnh</button>
+            <button class="sec" onclick="stackPrint()">In Stack</button>
+            <button class="sec" onclick="stackCheckEmpty()">Kiểm tra rỗng</button>
+            <button class="danger" onclick="stackReset()">Làm rỗng</button>
         </div>
         <h3>Ứng dụng chuyển đổi cơ số</h3>
         <div class="row">
             <input type="number" id="convVal" placeholder="Nhập số cần đổi...">
-            <button class="success" onclick="stackDecToBin()">Thập phân → Nhị phân</button>
-            <button class="success" onclick="stackBinToDec()">Nhị phân → Thập phân</button>
+            <button class="success" onclick="stackDecToBin()">Thập phân → Nhị phân </button>
+            <button class="success" onclick="stackBinToDec()">Nhị phân → Thập phân </button>
         </div>
         <div class="output" id="stackOut">Sẵn sàng thao tác trên Stack...</div>
     </div>
@@ -128,7 +128,7 @@
                 </div>
                 <div class="row">
                     <button onclick="polyInsert(1)">Thêm đơn thức</button>
-                    <button class="danger" onclick="polyReset(1)">Xóa P(x)</button>
+                    <button class="danger" onclick="polyReset(1)">Xóa</button>
                 </div>
             </div>
 
@@ -141,7 +141,7 @@
                 </div>
                 <div class="row">
                     <button onclick="polyInsert(2)">Thêm đơn thức</button>
-                    <button class="danger" onclick="polyReset(2)">Xóa Q(x)</button>
+                    <button class="danger" onclick="polyReset(2)">Xóa</button>
                 </div>
             </div>
         </div>
