@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Calculator (C + WebAssembly)</title>
+    <style>
+        :root { --primary: #2563eb; --primary-dark: #1d4ed8; --sec: #475569; --danger: #dc2626; --success: #16a34a; --bg: #f1f5f9; }
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 860px; margin: 30px auto; padding: 0 16px; background: var(--bg); color: #1e293b; }
+        h1 { text-align: center; color: #0f172a; margin-bottom: 20px; }
+        .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .tab-btn { flex: 1; min-width: 150px; padding: 12px; border: none; border-radius: 8px; background: #cbd5e1; color: #1e293b; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(37,99,235,0.25); }
+        .card { background: white; padding: 22px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: none; }
+        .card.active { display: block; }
+        h2 { margin-top: 0; font-size: 1.25rem; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        h3 { font-size: 1rem; margin: 14px 0 8px; color: #334155; }
+        .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+        input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+        input[type="number"] { width: 135px; }
+        input[type="text"] { flex: 1; min-width: 200px; }
+        button { padding: 8px 13px; border: none; border-radius: 6px; background: var(--primary); color: white; cursor: pointer; font-weight: 500; font-size: 0.9rem; }
+        button:hover { background: var(--primary-dark); }
+        button.sec { background: var(--sec); }
+        button.sec:hover { background: #334155; }
+        button.success { background: var(--success); }
+        button.success:hover { background: #15803d; }
+        button.danger { background: var(--danger); }
+        button.danger:hover { background: #b91c1c; }
+        .status-box { background: #eff6ff; border-left: 4px solid var(--primary); padding: 10px 14px; border-radius: 6px; font-family: monospace; margin-bottom: 12px; font-size: 0.95rem; }
+        .output { background: #0f172a; color: #f8fafc; padding: 14px; border-radius: 8px; font-family: monospace; font-size: 0.95rem; min-height: 28px; white-space: pre-wrap; line-height: 1.5; }
+        .poly-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+        .poly-panel { background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        @media (max-width: 650px) { .poly-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <h1>DSA WebAssembly Calculator</h1>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('bst', this)">1. Cây BST</button>
+        <button class="tab-btn" onclick="switchTab('list', this)">2. Linked List</button>
+        <button class="tab-btn" onclick="switchTab('stack', this)">3. Ngăn Xếp (Stack)</button>
+        <button class="tab-btn" onclick="switchTab('poly', this)">4. Đa Thức</button>
+    </div>
+
+    <!-- ==================== 1. BST ==================== -->
+    <div id="tab-bst" class="card active">
+        <h2>Cây Nhị Phân Tìm Kiếm (BST)</h2>
+        <div class="status-box" id="bstState">Cây hiện tại (InOrder): (Rỗng)</div>
+        <div class="row">
+            <input type="number" id="bstVal" placeholder="Nhập khóa x...">
+            <button onclick="bstInsert()">Thêm nút (insertNode)</button>
+            <button class="danger" onclick="bstDelete()">Xóa nút (deleteNode)</button>
+            <button class="sec" onclick="bstSearch()">Tìm kiếm (searchNode)</button>
+        </div>
+        <div class="row">
+            <button class="sec" onclick="bstTraverse(1)">Duyệt PreOrder</button>
+            <button class="sec" onclick="bstTraverse(2)">Duyệt InOrder</button>
+            <button class="sec" onclick="bstTraverse(3)">Duyệt PostOrder</button>
+            <button class="success" onclick="bstMinMax(1)">Tìm Min (getMin)</button>
+            <button class="success" onclick="bstMinMax(2)">Tìm Max (getMax)</button>
+            <button class="sec" onclick="bstCheckEmpty()">Kiểm tra rỗng (empty)</button>
+            <button class="danger" onclick="bstReset()">Xóa cây (freeTree)</button>
+        </div>
+        <div class="output" id="bstOut">Sẵn sàng thao tác trên BST...</div>
+    </div>
+
+    <!-- ==================== 2. LINKED LIST ==================== -->
+    <div id="tab-list" class="card">
+        <h2>Danh Sách Liên Kết Đơn (Linked List)</h2>
+        <div class="status-box" id="listState">Danh sách L1: (Rỗng)</div>
+        <div class="row">
+            <input type="number" id="listVal" placeholder="Nhập số nguyên x...">
+            <button onclick="listAppend()">Thêm cuối (append)</button>
+            <button class="danger" onclick="listDeleteVal()">Xóa phần tử x (deleteList)</button>
+            <button class="sec" onclick="listMember()">Kiểm tra tồn tại (member)</button>
+        </div>
+        <div class="row">
+            <button class="sec" onclick="listPrint()">In danh sách (printList)</button>
+            <button class="success" onclick="listSort(1)">Sắp xếp tăng (sort)</button>
+            <button class="success" onclick="listSort(2)">Sắp xếp giảm (sort1)</button>
+            <button class="sec" onclick="listAvg()">Trung bình (average)</button>
+            <button class="sec" onclick="listEvenOdd(1)">Số chẵn (printEven)</button>
+            <button class="sec" onclick="listEvenOdd(2)">Số lẻ (printOod)</button>
+            <button class="sec" onclick="listCheckEmpty()">Kiểm tra rỗng (emptyList)</button>
+            <button class="danger" onclick="listReset()">Xóa DS (freeList)</button>
+        </div>
+        <div class="row">
+            <input type="text" id="list2Input" placeholder="Nhập dãy số DS L2 (VD: 2 4 6 8) để tìm giao...">
+            <button class="success" onclick="listIntersect()">Giao L1 ∩ L2 (intersection)</button>
+        </div>
+        <div class="output" id="listOut">Sẵn sàng thao tác trên Linked List...</div>
+    </div>
+
+    <!-- ==================== 3. STACK ==================== -->
+    <div id="tab-stack" class="card">
+        <h2>Ngăn Xếp & Đổi Cơ Số (Stack)</h2>
+        <div class="status-box" id="stackState">Ngăn xếp (Đỉnh -> Đáy): (Rỗng)</div>
+        <div class="row">
+            <input type="number" id="stackVal" placeholder="Nhập số nguyên x...">
+            <button onclick="stackPush()">Push (push)</button>
+            <button class="danger" onclick="stackPop()">Pop (pop)</button>
+            <button class="sec" onclick="stackTop()">Xem đỉnh (top)</button>
+            <button class="sec" onclick="stackPrint()">In Stack (printStack)</button>
+            <button class="sec" onclick="stackCheckEmpty()">Kiểm tra rỗng (emptyStack)</button>
+            <button class="danger" onclick="stackReset()">Làm rỗng (makenullStack)</button>
+        </div>
+        <h3>Ứng dụng chuyển đổi cơ số</h3>
+        <div class="row">
+            <input type="number" id="convVal" placeholder="Nhập số cần đổi...">
+            <button class="success" onclick="stackDecToBin()">Thập phân → Nhị phân (decToBin)</button>
+            <button class="success" onclick="stackBinToDec()">Nhị phân → Thập phân (binToDec)</button>
+        </div>
+        <div class="output" id="stackOut">Sẵn sàng thao tác trên Stack...</div>
+    </div>
+
+    <!-- ==================== 4. ĐA THỨC ==================== -->
+    <div id="tab-poly" class="card">
+        <h2>Tính Toán Đa Thức</h2>
+        <div class="poly-grid">
+            <div class="poly-panel">
+                <h3>Đa thức P(x)</h3>
+                <div class="status-box" id="polyPState">P(x) = 0</div>
+                <div class="row">
+                    <input type="number" step="any" id="pCoeff" placeholder="Hệ số...">
+                    <input type="number" id="pExp" placeholder="Bậc...">
+                </div>
+                <div class="row">
+                    <button onclick="polyInsert(1)">Thêm đơn thức (chenDonThuc)</button>
+                    <button class="danger" onclick="polyReset(1)">Xóa P(x)</button>
+                </div>
+            </div>
+
+            <div class="poly-panel">
+                <h3>Đa thức Q(x)</h3>
+                <div class="status-box" id="polyQState">Q(x) = 0</div>
+                <div class="row">
+                    <input type="number" step="any" id="qCoeff" placeholder="Hệ số...">
+                    <input type="number" id="qExp" placeholder="Bậc...">
+                </div>
+                <div class="row">
+                    <button onclick="polyInsert(2)">Thêm đơn thức (chenDonThuc)</button>
+                    <button class="danger" onclick="polyReset(2)">Xóa Q(x)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <button class="success" onclick="polyAdd()">Cộng P(x) + Q(x) (congDaThuc)</button>
+            <button class="success" onclick="polyMul()">Nhân P(x) × Q(x) (nhanDaThuc)</button>
+            <button class="sec" onclick="polyDeriv(1)">Đạo hàm P'(x) (tinhDaoHam)</button>
+            <button class="sec" onclick="polyDeriv(2)">Đạo hàm Q'(x) (tinhDaoHam)</button>
+        </div>
+        <div class="output" id="polyOut">Nhập các đơn thức cho P(x) và Q(x) để tính toán...</div>
+    </div>
+
+    <script>
+        // Bộ đệm hứng toàn bộ kết quả printf() từ code C
+        let stdoutLines = [];
+        var Module = {
+            print: function(text) {
+                stdoutLines.push(text);
+            },
+            onRuntimeInitialized: function() {
+                Module._wasm_init();
+                refreshAllStates();
+            }
+        };
+
+        function runAndCapture(fn) {
+            stdoutLines = [];
+            fn();
+            return stdoutLines.filter(line => line.trim() !== "").join("\n");
+        }
+
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function refreshAllStates() {
+            updateBstState();
+            updateListState();
+            updateStackState();
+            updatePolyState();
+        }
+
+        // ==================== JS: BST ====================
+        function updateBstState() {
+            const out = runAndCapture(() => Module._wasm_bst_traverse(2));
+            document.getElementById('bstState').innerText = "Cây hiện tại (InOrder): " + out;
+        }
+        function bstInsert() {
+            const x = parseInt(document.getElementById('bstVal').value);
+            if (isNaN(x)) return;
+            const msg = runAndCapture(() => Module._wasm_bst_insert(x));
+            document.getElementById('bstOut').innerText = msg ? `Thông báo từ C: ${msg}` : `Đã thêm nút ${x} vào cây.`;
+            document.getElementById('bstVal').value = '';
+            updateBstState();
+        }
+        function bstDelete() {
+            const x = parseInt(document.getElementById('bstVal').value);
+            if (isNaN(x)) return;
+            Module._wasm_bst_delete(x);
+            document.getElementById('bstOut').innerText = `Đã thực hiện deleteNode(${x}).`;
+            document.getElementById('bstVal').value = '';
+            updateBstState();
+        }
+        function bstSearch() {
+            const x = parseInt(document.getElementById('bstVal').value);
+            if (isNaN(x)) return;
+            const found = Module._wasm_bst_search(x);
+            document.getElementById('bstOut').innerText = found ? `Tìm thấy nút ${x} trong cây!` : `Không tìm thấy nút ${x}.`;
+        }
+        function bstTraverse(mode) {
+            const names = { 1: "PreOrder", 2: "InOrder", 3: "PostOrder" };
+            const res = runAndCapture(() => Module._wasm_bst_traverse(mode));
+            document.getElementById('bstOut').innerText = `Duyệt ${names[mode]}: ${res}`;
+        }
+        function bstMinMax(mode) {
+            const val = Module._wasm_bst_minmax(mode);
+            const label = mode === 1 ? "Nhỏ nhất (getMin)" : "Lớn nhất (getMax)";
+            document.getElementById('bstOut').innerText = val === -1 ? "Cây đang rỗng (-1)." : `Giá trị ${label}: ${val}`;
+        }
+        function bstCheckEmpty() {
+            const isEmpty = Module._wasm_bst_empty();
+            document.getElementById('bstOut').innerText = isEmpty ? "empty(T) = 1 (Cây đang rỗng)" : "empty(T) = 0 (Cây có phần tử)";
+        }
+        function bstReset() {
+            Module._wasm_bst_reset();
+            document.getElementById('bstOut').innerText = "Đã giải phóng và làm rỗng cây.";
+            updateBstState();
+        }
+
+        // ==================== JS: LINKED LIST ====================
+        function updateListState() {
+            const out = runAndCapture(() => Module._wasm_list_print());
+            document.getElementById('listState').innerText = "Danh sách L1: " + out;
+        }
+        function listAppend() {
+            const x = parseInt(document.getElementById('listVal').value);
+            if (isNaN(x)) return;
+            Module._wasm_list_append(x);
+            document.getElementById('listOut').innerText = `Đã thêm ${x} vào cuối danh sách.`;
+            document.getElementById('listVal').value = '';
+            updateListState();
+        }
+        function listDeleteVal() {
+            const x = parseInt(document.getElementById('listVal').value);
+            if (isNaN(x)) return;
+            const ok = Module._wasm_list_delete_val(x);
+            document.getElementById('listOut').innerText = ok ? `Đã xóa phần tử ${x} bằng deleteList.` : `Không tìm thấy ${x} trong danh sách.`;
+            document.getElementById('listVal').value = '';
+            updateListState();
+        }
+        function listMember() {
+            const x = parseInt(document.getElementById('listVal').value);
+            if (isNaN(x)) return;
+            const ok = Module._wasm_list_member(x);
+            document.getElementById('listOut').innerText = ok ? `member(${x}) = 1 (Có tồn tại)` : `member(${x}) = 0 (Không tồn tại)`;
+        }
+        function listPrint() {
+            const res = runAndCapture(() => Module._wasm_list_print());
+            document.getElementById('listOut').innerText = `printList(L1): ${res}`;
+        }
+        function listSort(mode) {
+            Module._wasm_list_sort(mode);
+            updateListState();
+            const res = runAndCapture(() => Module._wasm_list_print());
+            document.getElementById('listOut').innerText = (mode === 1 ? "Sau sort() tăng dần: " : "Sau sort1() giảm dần: ") + res;
+        }
+        function listAvg() {
+            if (Module._wasm_list_empty()) {
+                document.getElementById('listOut').innerText = "Danh sách rỗng, không thể tính trung bình!";
+                return;
+            }
+            const avg = Module._wasm_list_avg();
+            document.getElementById('listOut').innerText = `Trung bình cộng average(L1) = ${avg.toFixed(3)}`;
+        }
+        function listEvenOdd(mode) {
+            const res = runAndCapture(() => Module._wasm_list_even_odd(mode));
+            document.getElementById('listOut').innerText = res;
+        }
+        function listCheckEmpty() {
+            const isEmpty = Module._wasm_list_empty();
+            document.getElementById('listOut').innerText = isEmpty ? "emptyList(L1) = 1 (Rỗng)" : "emptyList(L1) = 0 (Có phần tử)";
+        }
+        function listIntersect() {
+            const raw = document.getElementById('list2Input').value.trim();
+            if (!raw) {
+                document.getElementById('listOut').innerText = "Hãy nhập các số cho danh sách L2 (cách nhau bằng dấu cách).";
+                return;
+            }
+            Module._wasm_list_intersect_clear();
+            raw.split(/\s+/).forEach(tok => {
+                const n = parseInt(tok);
+                if (!isNaN(n)) Module._wasm_list_intersect_add2(n);
+            });
+            const res = runAndCapture(() => Module._wasm_list_intersect_run());
+            document.getElementById('listOut').innerText = `Kết quả intersection(L1, L2): ${res}`;
+        }
+        function listReset() {
+            Module._wasm_list_reset();
+            document.getElementById('listOut').innerText = "Đã giải phóng và làm rỗng danh sách L1.";
+            updateListState();
+        }
+
+        // ==================== JS: STACK ====================
+        function updateStackState() {
+            const out = runAndCapture(() => Module._wasm_stack_print());
+            document.getElementById('stackState').innerText = "Ngăn xếp (Đỉnh -> Đáy): " + out;
+        }
+        function stackPush() {
+            const x = parseInt(document.getElementById('stackVal').value);
+            if (isNaN(x)) return;
+            const msg = runAndCapture(() => Module._wasm_stack_push(x));
+            document.getElementById('stackOut').innerText = msg ? `Thông báo từ C: ${msg}` : `Đã push(${x}) vào ngăn xếp.`;
+            document.getElementById('stackVal').value = '';
+            updateStackState();
+        }
+        function stackPop() {
+            const msg = runAndCapture(() => Module._wasm_stack_pop());
+            document.getElementById('stackOut').innerText = msg ? `Thông báo từ C: ${msg}` : `Đã pop() phần tử ở đỉnh.`;
+            updateStackState();
+        }
+        function stackTop() {
+            if (Module._wasm_stack_empty()) {
+                document.getElementById('stackOut').innerText = "Ngăn xếp đang rỗng!";
+                return;
+            }
+            const val = Module._wasm_stack_top();
+            document.getElementById('stackOut').innerText = `Phần tử đỉnh top(S) = ${val}`;
+        }
+        function stackPrint() {
+            const res = runAndCapture(() => Module._wasm_stack_print());
+            document.getElementById('stackOut').innerText = `printStack(S): ${res}`;
+        }
+        function stackCheckEmpty() {
+            const isEmpty = Module._wasm_stack_empty();
+            document.getElementById('stackOut').innerText = isEmpty ? "emptyStack(S) = 1 (Rỗng)" : "emptyStack(S) = 0 (Có phần tử)";
+        }
+        function stackReset() {
+            Module._wasm_stack_reset();
+            document.getElementById('stackOut').innerText = "Đã làm rỗng ngăn xếp (makenullStack).";
+            updateStackState();
+        }
+        function stackDecToBin() {
+            const n = parseInt(document.getElementById('convVal').value);
+            if (isNaN(n) || n < 0) {
+                document.getElementById('stackOut').innerText = "Vui lòng nhập số nguyên không âm.";
+                return;
+            }
+            const res = runAndCapture(() => Module._wasm_stack_decToBin(n));
+            document.getElementById('stackOut').innerText = res;
+        }
+        function stackBinToDec() {
+            const raw = document.getElementById('convVal').value.trim();
+            if (!/^[01]+$/.test(raw)) {
+                document.getElementById('stackOut').innerText = "Vui lòng chỉ nhập chuỗi số nhị phân gồm 0 và 1 (VD: 1011).";
+                return;
+            }
+            const dec = Module._wasm_stack_binToDec(parseFloat(raw));
+            document.getElementById('stackOut').innerText = `Nhị phân ${raw} sang thập phân (binToDec) là: ${dec}`;
+        }
+
+        // ==================== JS: ĐA THỨC ====================
+        function updatePolyState() {
+            const pStr = runAndCapture(() => Module._wasm_dt_get(1));
+            const qStr = runAndCapture(() => Module._wasm_dt_get(2));
+            document.getElementById('polyPState').innerText = "P(x) = " + pStr;
+            document.getElementById('polyQState').innerText = "Q(x) = " + qStr;
+        }
+        function polyInsert(which) {
+            const coeff = parseFloat(document.getElementById(which === 1 ? 'pCoeff' : 'qCoeff').value);
+            const exp = parseInt(document.getElementById(which === 1 ? 'pExp' : 'qExp').value);
+            if (isNaN(coeff) || isNaN(exp)) return;
+            Module._wasm_dt_insert(which, coeff, exp);
+            document.getElementById(which === 1 ? 'pCoeff' : 'qCoeff').value = '';
+            document.getElementById(which === 1 ? 'pExp' : 'qExp').value = '';
+            updatePolyState();
+            document.getElementById('polyOut').innerText = `Đã chèn đơn thức ${coeff}X^${exp} vào ${which === 1 ? 'P(x)' : 'Q(x)'}.`;
+        }
+        function polyReset(which) {
+            Module._wasm_dt_reset(which);
+            updatePolyState();
+            document.getElementById('polyOut').innerText = `Đã làm rỗng đa thức ${which === 1 ? 'P(x)' : 'Q(x)'}.`;
+        }
+        function polyAdd() {
+            const res = runAndCapture(() => Module._wasm_dt_add());
+            document.getElementById('polyOut').innerText = `Tổng P(x) + Q(x) =\n${res}`;
+        }
+        function polyMul() {
+            const res = runAndCapture(() => Module._wasm_dt_mul());
+            document.getElementById('polyOut').innerText = `Tích P(x) × Q(x) =\n${res}`;
+        }
+        function polyDeriv(which) {
+            const res = runAndCapture(() => Module._wasm_dt_deriv(which));
+            document.getElementById('polyOut').innerText = `Đạo hàm ${which === 1 ? "P'(x)" : "Q'(x)"} =\n${res}`;
+        }
+    </script>
+    <script src="dsa_wasm.js"></script>
+</body>
+</html>
