@@ -40,19 +40,19 @@
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('bst', this)">1. Cây BST</button>
         <button class="tab-btn" onclick="switchTab('list', this)">2. Linked List</button>
-        <button class="tab-btn" onclick="switchTab('stack', this)">3. Ngăn Xếp (Stack)</button>
+        <button class="tab-btn" onclick="switchTab('stack', this)">3. Ngăn Xếp</button>
         <button class="tab-btn" onclick="switchTab('poly', this)">4. Đa Thức</button>
     </div>
 
     <!-- ==================== 1. BST ==================== -->
     <div id="tab-bst" class="card active">
         <h2>Cây Nhị Phân Tìm Kiếm (BST)</h2>
-        <div class="status-box" id="bstState">Cây hiện tại (InOrder): (Rỗng)</div>
+        <div class="status-box" id="bstState">Cây hiện tại: (Rỗng)</div>
         <div class="row">
             <input type="number" id="bstVal" placeholder="Nhập khóa x...">
             <button onclick="bstInsert()">Thêm nút (insertNode)</button>
-            <button class="danger" onclick="bstDelete()">Xóa nút (deleteNode)</button>
-            <button class="sec" onclick="bstSearch()">Tìm kiếm (searchNode)</button>
+            <button class="danger" onclick="bstDelete()">Xóa nút</button>
+            <button class="sec" onclick="bstSearch()">Tìm kiếm</button>
         </div>
         <div class="row">
             <button class="sec" onclick="bstTraverse(1)">Duyệt PreOrder</button>
@@ -72,7 +72,7 @@
         <div class="status-box" id="listState">Danh sách L1: (Rỗng)</div>
         <div class="row">
             <input type="number" id="listVal" placeholder="Nhập số nguyên x...">
-            <button onclick="listAppend()">Thêm cuối (append)</button>
+            <button onclick="listAppend()">Thêm cuối</button>
             <button class="danger" onclick="listDeleteVal()">Xóa phần tử x</button>
             <button class="sec" onclick="listMember()">Kiểm tra tồn tại</button>
         </div>
